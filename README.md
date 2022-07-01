@@ -1,3 +1,3 @@
-#ZOOM_CLONE_CODE
+#실시간 통신 프로그램 (zoom 클론 코딩)
 
-For websocket practice
+Using WebSocket and SocketIO
