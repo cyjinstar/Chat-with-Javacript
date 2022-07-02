@@ -14,37 +14,26 @@ const httpServer = http.createServer(app);
 const wsServer = SocketIO(httpServer);
 
 wsServer.on("connection", (socket) => {
-    socket.on("enter_room", (roomName, done) => {
-        console.log(roomName);
-        setTimeout(() => {
-            done("hi");
-        },1000);
+    socket["UserID"] = "Noname"
+    socket.onAny((event) => {
+        console.log(`Socket Event : ${event}`)
     });
+    socket.on("enter_room", (roomName, done) => {
+        socket.join(roomName);
+        done();
+        socket.to(roomName).emit("welcome", socket.UserID);
+    });
+    socket.on("disconnecting", () => {
+        socket.rooms.forEach(room => {
+            socket.to(room).emit("bye", socket.UserID)
+        });
+    });
+    socket.on("new_message", (msg, room, done) => {
+        socket.to(room).emit("new_message", `${socket.UserID}: ${msg}`);
+        done();
+    });
+    socket.on("UserID", (UserID) => (socket["UserID"] = UserID));
 });
-
-// const sockets = [];
-// wss.on("connection", (socket) => {
-//     sockets.push(socket);
-//     socket["id"] = "Undefied"
-//     console.log("Connected from the Browser.");
-//     socket.on("close", () => console.log("Disconnected from the Browser."));
-//     socket.on("message", (msg) => {
-//         const message = JSON.parse(msg);
-//         switch (message.type){
-//             case "new_message":
-//                 sockets.forEach((aSocket) => 
-//                 aSocket.send(`${socket.id}: ${message.payload}`));
-//                 break;
-//             case "id" : 
-//                 socket["id"] = message.payload;
-//                 if(message.payload === ""){
-//                     socket["id"] = "Undefied"
-//                 }
-//                 break;
-//         }
-//     });
-// });
-
 
 console.log("SEVER_RUNNING_SUCCESS!");
 const handleListen = () => console.log("Listening on http://localhost:3000");
@@ -56,6 +45,6 @@ httpServer.listen(3000, handleListen);
     payload:"hello";
 }
 {
-    type:"id";
+    type:"UserID";
     payload:"hello";
 }
