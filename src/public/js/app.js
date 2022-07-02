@@ -30,7 +30,7 @@ function handleMessageSubmit(event) {
 
 function handleIDSubmit(event) {
     event.preventDefault();
-    const input = room.querySelector("#UserID input");
+    const input = form.querySelector("#UserID");
     socket.emit("UserID", input.value);
     
 }
@@ -41,21 +41,21 @@ function showRoom() {
     const h3 = room.querySelector("h3");
     h3.innerText = `Room : ${roomName}`
     const msgform = room.querySelector("#msg");
-    const UserIDform = room.querySelector("#UserID");
     msgform.addEventListener("submit", handleMessageSubmit);
-    UserIDform.addEventListener("submit", handleIDSubmit);
 }
 
 function handleRoomSubmit(event) {
     event.preventDefault();
-    const input = form.querySelector("input");
+    const UserIDform = form.querySelector("#UserID");
+    const roomInput = form.querySelector("#roomName");
+    UserIDform.addEventListener("submit", handleIDSubmit);
     socket.emit(
         "enter_room",
-        input.value,
+        UserIDform.value,
+        roomInput.value,
         showRoom
     );
-    roomName = input.value;
-    input.value = ""
+    roomName = roomInput.value;
 }
 
 form.addEventListener("submit", handleRoomSubmit);
@@ -69,5 +69,3 @@ socket.on("bye", (left) => {
 })
 
 socket.on("new_message", addMessage);
-
-
