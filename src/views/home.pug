@@ -9,13 +9,17 @@ html(lang="en")
     body 
         header 
             h1 CYJ's TEST SERVER
-        main 
-            h2 SYSTEM_OPERATRING
-            form#id
-                input(type="text", placeholder="UserID", requried)
-                button Save
-            ul
-            form#message
-                input(type="text", placeholder="write a massege", requried)
-                button Send
+        main
+            div#welcome
+                form
+                    input#UserID(placeholder="User ID", required, type="text")
+                    input#roomName(placeholder="room name", required, type="text")
+                    button Enter Room
+            div#room
+                h3 
+                ul
+                form#msg
+                    input(placeholder="message", required, type="text")
+                    button Send
+        script(src="/socket.io/socket.io.js")
         script(src="/public/js/app.js")
