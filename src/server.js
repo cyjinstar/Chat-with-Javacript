@@ -39,11 +39,15 @@ wsServer.on("connection", (socket) => {
         socket["UserID"]=`${UserID}`;
         done();
         socket.to(roomName).emit("welcome", socket.UserID);
+        wsServer.sockets.emit("room_change", publicRooms());
     });
     socket.on("disconnecting", () => {
         socket.rooms.forEach(room => {
             socket.to(room).emit("bye", socket.UserID)
         });
+    });
+    socket.on("disconnect", () => {
+        wsServer.sockets.emit("room_change",publicRooms());
     });
     socket.on("new_message", (msg, room, done) => {
         socket.to(room).emit("new_message", `${socket.UserID}: ${msg}`);
